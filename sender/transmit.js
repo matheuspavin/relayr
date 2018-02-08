@@ -1,13 +1,25 @@
 'use strict'
 
-const request = require('request')
+var net = require('net');
 
-/*
-*  This function will be called for each event.  (eg: for each sensor reading)
-*  Modify it as needed.
-*/
+
+// I do not need the variables, but i believe the code readability becomes more efficient.
+var host = '127.0.0.1';
+var port = 8080;
+var client = new net.Socket();
+
 module.exports = function(eventMsg, encoding, callback) {
-  request.post('http://localhost:8080/event', {json: true, body: eventMsg}, (err, res, body) => {
-    callback(err)
-  })
+  // In the best practices for the connections in JS, try/catch, help the application to become faster.
+  try{
+    client.connect(port, host, function() {
+        client.write(JSON.stringify(eventMsg));
+        client.destroy();
+        callback();
+      });
+    } catch (err) {
+      callback(err);
+    }
 }
+
+// I didn't need to create a data handler for the client. I make the handshake...
+// ...send the message, destroy the connection and send the answer to the layer before.

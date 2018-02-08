@@ -1,23 +1,22 @@
 'use strict'
+const net = require('net');
 
-/*
-*  Modify this file as needed.
-*/
+const PORT = 8080;
+const ADDRESS = 'localhost';
 
-const http = require('http')
-
+// let the listener, for the system kill the process
 process.on('SIGTERM', function() {
   process.exit(0)
 })
 
-const server = http.createServer(function(req, res) {
-  let body = []
-  req.on('data', body.push.bind(body))
-  req.on('end', () => {
-    // just print to stdout
-    console.log(Buffer.concat(body).toString())
-    res.end()
-  })
-})
 
-server.listen(8080)
+// create a base socket, listening to the data transfers...
+// ...didn't create on.end, because, after receive the data, i can kill the process.
+net.createServer(socket => {
+    socket.on('data', function(data) {
+        // I have to do the two process, because the data came without quotes,... 
+        //...so i can't think in a best way, without use a non-native library.
+        console.log(JSON.stringify(JSON.parse(data)));
+        socket.destroy();
+    });
+}).listen(PORT, ADDRESS);
