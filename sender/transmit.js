@@ -1,6 +1,6 @@
 'use strict'
-
 var net = require('net');
+
 
 
 // I do not need the variables, but i believe the code readability becomes more efficient.
@@ -13,11 +13,12 @@ module.exports = function(eventMsg, encoding, callback) {
   try{
     client.connect(port, host, function() {
         client.write(JSON.stringify(eventMsg));
+        console.log(client._bytesDispatched);
         client.destroy();
         callback();
       });
     } catch (err) {
-      callback(err);
+      console.log(err);
     }
 }
 
