@@ -1,3 +1,4 @@
+
 'use strict'
 var net = require('net');
 
@@ -9,16 +10,16 @@ var port = 8080;
 var client = new net.Socket();
 
 module.exports = function(eventMsg, encoding, callback) {
-  // In the best practices for the connections in JS, try/catch, help the application to become faster.
   try{
+    if (!eventMsg) throw new Error('The server did not accept empty strings');
+    if (!encoding) throw new Error('The server did not accept empty encoding');
     client.connect(port, host, function() {
         client.write(JSON.stringify(eventMsg));
-        console.log(client._bytesDispatched);
         client.destroy();
-        callback();
+        return callback();
       });
     } catch (err) {
-      console.log(err);
+      return(err);
     }
 }
 

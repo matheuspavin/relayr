@@ -20,6 +20,6 @@ net.createServer(socket => {
         console.log(JSON.stringify(JSON.parse(data)));
         var elapsed = process.hrtime(start)[1] / 1000000;
         console.error('latency : ' + (process.hrtime(start)[0] + " s, " + elapsed.toFixed(3)));
-        socket.destroy();
     });
+    socket.on('end', () =>  socket.destroy());
 }).listen(PORT, ADDRESS);
